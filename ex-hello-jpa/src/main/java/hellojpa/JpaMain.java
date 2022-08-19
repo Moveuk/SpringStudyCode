@@ -4,6 +4,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.util.List;
 
 public class JpaMain {
     public static void main(String[] args) {
@@ -36,8 +37,16 @@ public class JpaMain {
             //회원 수정
             // 조회한 객체를 변경하면 커밋시 영속성 컨텍스트에서 변환된 것을 flush 하여 내보냄
             // 즉, 변환된 값을 기억하고 있다가 수정 쿼리가 나감.
-            findMember.setName("helloJPA");
+//            findMember.setName("helloJPA");
 
+            //JPQL
+            List<Member> result = em.createQuery("select m from Member as m", Member.class)
+                    .setFirstResult(5)  //5번부터
+                    .setMaxResults(8)   //8개 가져오기
+                    .getResultList();   //쿼리로 리스트 받아옴.
+
+            //MySQL - Limit ? Offset ?
+            //Oracle - rownum
 
             // 트랜잭션 커밋.
             tx.commit();
