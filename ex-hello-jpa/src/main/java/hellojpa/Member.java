@@ -6,9 +6,22 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
+//@SequenceGenerator(
+//        name = "MEMBER_SEQ_GENERATOR",
+//        sequenceName = "MEMBER_SEQ",    // 매핑할 데이터 베이스 시퀀스 이름.
+//        initialValue = 1, allocationSize = 1)
+//@TableGenerator(
+//        name = "MEMBER_SEQ_GENERATOR",
+//        table = "MY_SEQUENCES",
+//        pkColumnValue = “MEMBER_SEQ", allocationSize = 1)
 public class Member {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    // Auto는 DB 방언에 맞추서 아래 3개 중 자동 선택
+    // IDENTITY: DB 위임
+    // SEQUENCE: ORACLE 주로 사용, Sequence 오브젝트를 생성해서 call하여 사용함.
+    // TABLE: 키 생성 전용 테이블을 만들어 DB 시퀀스를 흉내내는 전략, 모든 DB에 적용 가능하지만 성능이 안좋을 수 있음.
     private Long id;
     @Column(name = "name")  //테이블 컬럼 변경
     private String username;
