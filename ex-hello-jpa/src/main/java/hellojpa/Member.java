@@ -22,9 +22,15 @@ public class Member {
     // IDENTITY: DB 위임
     // SEQUENCE: ORACLE 주로 사용, Sequence 오브젝트를 생성해서 call하여 사용함.
     // TABLE: 키 생성 전용 테이블을 만들어 DB 시퀀스를 흉내내는 전략, 모든 DB에 적용 가능하지만 성능이 안좋을 수 있음.
+    @Column(name = "MEMBER_ID")
     private Long id;
-    @Column(name = "name")  //테이블 컬럼 변경
+    @Column(name = "USERNAME")  //테이블 컬럼 변경
     private String username;
+//    @Column(name = "TEAM_ID")
+//    private Long teamId;
+    @ManyToOne
+    @JoinColumn(name = "TEAM_ID")
+    private Team team;
     private Integer age;
     //DB에는 없는 enum 타입을 사용할 수 있게 해준다.
     @Enumerated(EnumType.STRING)
@@ -44,5 +50,29 @@ public class Member {
 
     //JPA에서 생성자를 쓰려면 기본 생성자가 있어야만함.
     public Member() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
     }
 }
