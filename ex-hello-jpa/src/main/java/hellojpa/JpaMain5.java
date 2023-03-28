@@ -26,20 +26,20 @@ public class JpaMain5 {
 
             Member member = new Member();
             member.setUsername("member1");
-//            member.setTeamId(team.getId());
-            member.setTeam(team);
+            member.changeTeam(team);
             em.persist(member);
+
+//            team.getMembers().add(member); //위 setTeam에서 처리됨(편의메서드)
 
             em.flush(); //영속성 컨텍스트 더티체킹 SQL 내보냄
             em.clear(); //영속성 컨텍스트 클리어 -> 모든 객체가 삭제되어 다음부터는 새롭게 select해옴
 
-            // 조회
-            Member findMember = em.find(Member.class, member.getId());
-            List<Member> members = findMember.getTeam().getMembers();
+            Team findTeam = em.find(Team.class, team.getId());
+            List<Member> members = findTeam.getMembers();
 
-            for (Member m : members) {
-                System.out.println("m.getUsername() = " + m.getUsername());
-            }
+            System.out.println("==========");
+//            System.out.println("findTeam = " + findTeam); // 무한루프
+            System.out.println("==========");
 
             // 트랜잭션 커밋.
             tx.commit();

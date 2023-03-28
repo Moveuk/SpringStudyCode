@@ -14,6 +14,11 @@ public class Team {
     @OneToMany(mappedBy = "team") //Member 객체의 team과 묶여있음을 명시
     private List<Member> members = new ArrayList<>();
 
+    public void addMember(Member member) {
+        members.add(member);
+        member.setTeam(this);
+    }
+
     public Long getId() {
         return id;
     }
@@ -36,5 +41,14 @@ public class Team {
 
     public void setMembers(List<Member> members) {
         this.members = members;
+    }
+
+    @Override
+    public String toString() {
+        return "Team{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", members=" + members +
+                '}';
     }
 }
