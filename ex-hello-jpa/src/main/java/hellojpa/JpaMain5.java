@@ -4,6 +4,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.util.List;
 
 public class JpaMain5 {
     public static void main(String[] args) {
@@ -29,12 +30,16 @@ public class JpaMain5 {
             member.setTeam(team);
             em.persist(member);
 
+            em.flush(); //영속성 컨텍스트 더티체킹 SQL 내보냄
+            em.clear(); //영속성 컨텍스트 클리어 -> 모든 객체가 삭제되어 다음부터는 새롭게 select해옴
+
             // 조회
             Member findMember = em.find(Member.class, member.getId());
+            List<Member> members = findMember.getTeam().getMembers();
 
-//            Long findTeamId = findMember.getTeamId();
-            Team findTeam = findMember.getTeam();
-            System.out.println("findTeam.getName() = " + findTeam.getName());
+            for (Member m : members) {
+                System.out.println("m.getUsername() = " + m.getUsername());
+            }
 
             // 트랜잭션 커밋.
             tx.commit();
