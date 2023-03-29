@@ -15,6 +15,9 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
+    @OneToOne
+    @JoinColumn(name = "DELIVERY_ID")
+    private Delivery delivery;
     @OneToMany(mappedBy = "order") //비즈니스적으로 orderItem은 자주 쓸 수 있기에 양방향 매핑이 필요할 수 있다.
     private List<OrderItem> orderItems = new ArrayList<>();
     private LocalDateTime orderDateTime;

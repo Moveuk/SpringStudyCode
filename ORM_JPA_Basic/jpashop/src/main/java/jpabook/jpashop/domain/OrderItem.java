@@ -1,7 +1,5 @@
 package jpabook.jpashop.domain;
 
-import com.sun.org.apache.xpath.internal.operations.Or;
-
 import javax.persistence.*;
 
 @Entity
