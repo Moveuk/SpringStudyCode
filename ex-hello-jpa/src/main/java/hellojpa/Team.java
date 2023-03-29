@@ -12,6 +12,7 @@ public class Team {
     private Long id;
     private String name;
     @OneToMany(mappedBy = "team") //Member 객체의 team과 묶여있음을 명시
+    @JoinColumn(name = "TEAM_ID")
     private List<Member> members = new ArrayList<>();
 
     public void addMember(Member member) {
