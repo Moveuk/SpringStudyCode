@@ -17,7 +17,7 @@ import java.util.concurrent.locks.Lock;
 //        name = "MEMBER_SEQ_GENERATOR",
 //        table = "MY_SEQUENCES",
 //        pkColumnValue = “MEMBER_SEQ", allocationSize = 1)
-public class Member {
+public class Member extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -50,11 +50,11 @@ public class Member {
     //DB에는 없는 enum 타입을 사용할 수 있게 해준다.
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
-    //날짜 타입
-    @Temporal(TemporalType.TIMESTAMP) //옵션 종류: DATA, TIME, TIMESTAMP(날짜 + 시간)
-    private Date createdDate;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastModifiedDate;
+    //날짜 타입 - BaseEntity로 상속
+//    @Temporal(TemporalType.TIMESTAMP) //옵션 종류: DATA, TIME, TIMESTAMP(날짜 + 시간)
+//    private Date createdDate;
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date lastModifiedDate;
     //최신 하이버네이트는 다음 날짜객체를 지원하여 Temporal 쓸일이 없음
     private LocalDate testLocalDate;
     private LocalDateTime testLocalDateTime;
