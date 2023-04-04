@@ -1,5 +1,6 @@
 package jpabook.jpashop;
 
+import jpabook.jpashop.domain.Book;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderItem;
 
@@ -20,13 +21,10 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Order order = new Order();
-            em.persist(order);
+            Book book = new Book();
+            book.setName("JPA");
 
-
-            OrderItem orderItem = new OrderItem();
-            order.addOrderItem(orderItem);
-            em.persist(orderItem);
+            em.persist(book);
 
             // 트랜잭션 커밋.
             tx.commit();
