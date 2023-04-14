@@ -166,7 +166,6 @@ public class Member extends BaseEntity{
         return "Member{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
-                ", team=" + team +
                 '}';
     }
 }
