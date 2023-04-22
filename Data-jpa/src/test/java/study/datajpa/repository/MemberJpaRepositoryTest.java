@@ -36,6 +36,8 @@ class MemberJpaRepositoryTest {
 
     @Test
     public void basicCRUD() {
+        long standardCount = memberJpaRepository.count();
+
         Team team = Team.builder().build();
         teamJpaRepository.save(team);
         Member member1 = Member.builder().username("member1").team(team).build();
@@ -50,15 +52,15 @@ class MemberJpaRepositoryTest {
         assertThat(findMember2).isEqualTo(findMember2);
 
         List<Member> all = memberJpaRepository.findAll();
-        assertThat(all.size()).isEqualTo(2);
+        assertThat(all.size()).isEqualTo(2 + standardCount);
 
         long count = memberJpaRepository.count();
-        assertThat(count).isEqualTo(2);
+        assertThat(count).isEqualTo(2 + standardCount);
 
         memberJpaRepository.delete(member1);
         memberJpaRepository.delete(member2);
 
         long deletedCount = memberJpaRepository.count();
-        assertThat(deletedCount).isEqualTo(0);
+        assertThat(deletedCount).isEqualTo(standardCount);
     }
 }

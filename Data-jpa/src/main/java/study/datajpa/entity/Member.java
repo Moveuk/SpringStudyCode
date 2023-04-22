@@ -3,6 +3,8 @@ package study.datajpa.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Objects;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -28,6 +30,8 @@ public class Member {
 
     public void changeTeam(Team team) {
         this.team = team;
-        team.getMembers().add(this);
+        if (!Objects.isNull(team)) {
+            team.getMembers().add(this);
+        }
     }
 }
