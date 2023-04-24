@@ -3,6 +3,7 @@ package study.datajpa.repository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.MemberDTO;
@@ -146,5 +147,20 @@ class MemberRepositoryTest {
         List<Member> memberList = memberRepository.findByNames(Arrays.asList("AAA", "BBB"));
 
         assertThat(memberList).isEqualTo(Stream.of(member1, member2).toList());
+    }
+
+    @Test
+    public void testReturnType() {
+        Member member1 = Member.builder().username("AAA").age(10).build();
+        Member member2 = Member.builder().username("AAA").age(20).build();
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        List<Member> memberList = memberRepository.findListByUsername("AAA");
+//        Member member = memberRepository.findMemberByUsername("AAA");
+//        Optional<Member> optionalMember = memberRepository.findOptionalByUsername("AAA");
+
+        //두 개 이상일시 해당 예외 터짐 : jpa 예외가 spring 예외로 변환됨. DB의 다형성을 위해.
+        assertThatThrownBy(() -> memberRepository.findMemberByUsername("AAA")).isInstanceOf(IncorrectResultSizeDataAccessException.class);
     }
 }
