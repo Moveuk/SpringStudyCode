@@ -9,6 +9,7 @@ import java.util.Objects;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "username", "age"})
+@NamedQuery(name = "Member.ageFind", query = "select m from Member m where m.age >= :age")
 public class Member {
 
     @Id @GeneratedValue
