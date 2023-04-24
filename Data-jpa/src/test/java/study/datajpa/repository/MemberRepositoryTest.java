@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+import study.datajpa.MemberDTO;
 import study.datajpa.entity.Member;
+import study.datajpa.entity.Team;
 
 import java.util.List;
 
@@ -18,6 +20,8 @@ class MemberRepositoryTest {
 
     @Autowired
     MemberRepository memberRepository;
+    @Autowired
+    TeamRepository teamRepository;
 
     @Test
     public void testMember() {
@@ -89,5 +93,44 @@ class MemberRepositoryTest {
 
         assertThat(memberList.get(0).getAge()).isEqualTo(20);
         assertThat(memberList.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void testQuery() {
+        Member member1 = Member.builder().username("AAA").age(10).build();
+        Member member2 = Member.builder().username("AAA").age(20).build();
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        List<Member> memberList = memberRepository.usernameFind("AAA");
+
+        assertThat(memberList.get(0).getUsername()).isEqualTo("AAA");
+        assertThat(memberList.size()).isEqualTo(2);
+    }
+
+    @Test
+    public void testQueryValue() {
+        Member member1 = Member.builder().username("AAA").age(10).build();
+        Member member2 = Member.builder().username("AAA").age(20).build();
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        List<String> memberList = memberRepository.usernameList();
+
+        assertThat(memberList).allMatch(x -> x.equals("AAA"));
+    }
+
+    @Test
+    public void testQueryDTO() {
+        Team teamA = Team.builder().name("TeamA").build();
+        teamRepository.save(teamA);
+        Member member1 = Member.builder().username("AAA").age(10).team(teamA).build();
+        Member member2 = Member.builder().username("AAA").age(20).team(teamA).build();
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        List<MemberDTO> memberDTOList = memberRepository.findMemberDTO();
+
+        assertThat(memberDTOList).allMatch(x -> x.getTeamName().equals("TeamA"));
     }
 }
