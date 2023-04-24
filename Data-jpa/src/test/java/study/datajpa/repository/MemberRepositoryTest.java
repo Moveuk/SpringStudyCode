@@ -9,7 +9,9 @@ import study.datajpa.MemberDTO;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -89,7 +91,7 @@ class MemberRepositoryTest {
         memberRepository.save(member1);
         memberRepository.save(member2);
 
-        List<Member> memberList = memberRepository.ageFind( 20);
+        List<Member> memberList = memberRepository.ageFind(20);
 
         assertThat(memberList.get(0).getAge()).isEqualTo(20);
         assertThat(memberList.size()).isEqualTo(1);
@@ -132,5 +134,17 @@ class MemberRepositoryTest {
         List<MemberDTO> memberDTOList = memberRepository.findMemberDTO();
 
         assertThat(memberDTOList).allMatch(x -> x.getTeamName().equals("TeamA"));
+    }
+
+    @Test
+    public void testMultiParameterFind() {
+        Member member1 = Member.builder().username("AAA").age(10).build();
+        Member member2 = Member.builder().username("BBB").age(20).build();
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        List<Member> memberList = memberRepository.findByNames(Arrays.asList("AAA", "BBB"));
+
+        assertThat(memberList).isEqualTo(Stream.of(member1, member2).toList());
     }
 }
