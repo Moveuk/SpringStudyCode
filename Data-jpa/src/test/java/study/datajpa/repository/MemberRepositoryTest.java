@@ -248,4 +248,25 @@ class MemberRepositoryTest {
         assertThat(all).allMatch(member -> member.getAge() >= 13);
         assertThat(updateCount).isEqualTo(3);
     }
+
+    @Test
+    public void entityGraph() {
+        //given
+        Team teamA = Team.builder().name("teamA").build();
+        Team teamB = Team.builder().name("teamB").build();
+        teamRepository.save(teamA);
+        teamRepository.save(teamB);
+
+        memberRepository.save(Member.builder().username("member1").age(10).team(teamA).build());
+        memberRepository.save(Member.builder().username("member2").age(11).team(teamB).build());
+
+        em.flush();
+        em.clear();
+
+        //when
+        List<Member> all = memberRepository.findAll();
+
+        //then
+        all.forEach(member -> assertThat(member.getTeam()).isInstanceOf(Team.class));
+    }
 }
