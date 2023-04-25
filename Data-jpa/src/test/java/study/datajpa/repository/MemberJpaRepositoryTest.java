@@ -1,5 +1,7 @@
 package study.datajpa.repository;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +23,8 @@ class MemberJpaRepositoryTest {
     MemberJpaRepository memberJpaRepository;
     @Autowired
     TeamJpaRepository teamJpaRepository;
+    @PersistenceContext
+    EntityManager em;
 
     @Test
     public void testMember() {
@@ -110,5 +114,28 @@ class MemberJpaRepositoryTest {
 
         assertThat(byPage.size()).isEqualTo(3);
         assertThat(totalcount).isEqualTo(5);
+    }
+
+    @Test
+    public void bulkUpdate() {
+        //given
+        memberJpaRepository.save(Member.builder().username("member1").age(10).build());
+        memberJpaRepository.save(Member.builder().username("member2").age(11).build());
+        memberJpaRepository.save(Member.builder().username("member3").age(12).build());
+        memberJpaRepository.save(Member.builder().username("member4").age(13).build());
+        memberJpaRepository.save(Member.builder().username("member5").age(14).build());
+
+        //when
+        int age = 12;
+        long updateCount = memberJpaRepository.bulkAgePlus(age);
+        System.out.println("updateCount = " + updateCount);
+
+        em.clear();
+
+        //then
+        List<Member> all = memberJpaRepository.ageFind(13);
+        all.forEach(System.out::println);
+        assertThat(all).allMatch(member -> member.getAge() >= 13);
+        assertThat(updateCount).isEqualTo(3);
     }
 }
