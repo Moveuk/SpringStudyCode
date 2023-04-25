@@ -4,6 +4,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.MemberDTO;
@@ -162,5 +166,59 @@ class MemberRepositoryTest {
 
         //두 개 이상일시 해당 예외 터짐 : jpa 예외가 spring 예외로 변환됨. DB의 다형성을 위해.
         assertThatThrownBy(() -> memberRepository.findMemberByUsername("AAA")).isInstanceOf(IncorrectResultSizeDataAccessException.class);
+    }
+
+    @Test
+    public void paging() {
+        //given
+        memberRepository.save(Member.builder().username("member1").age(10).build());
+        memberRepository.save(Member.builder().username("member2").age(10).build());
+        memberRepository.save(Member.builder().username("member3").age(10).build());
+        memberRepository.save(Member.builder().username("member4").age(10).build());
+        memberRepository.save(Member.builder().username("member5").age(10).build());
+
+        int age = 10;
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "username"));
+
+        //when
+        Page<Member> pageByAge = memberRepository.findPageByAge(age, pageRequest);
+
+        Page<MemberDTO> map = pageByAge.map(member -> new MemberDTO(member.getId(), member.getUsername(), null));
+
+        //then
+        List<Member> content = pageByAge.getContent();
+        long totalCount = pageByAge.getTotalElements();
+
+        assertThat(content.size()).isEqualTo(3);
+        assertThat(totalCount).isEqualTo(5);
+        assertThat(pageByAge.getNumber()).isEqualTo(0);
+        assertThat(pageByAge.getTotalPages()).isEqualTo(2);
+        assertThat(pageByAge.isFirst()).isTrue();
+    }
+
+    @Test
+    public void slicing() {
+        //given
+        memberRepository.save(Member.builder().username("member1").age(10).build());
+        memberRepository.save(Member.builder().username("member2").age(10).build());
+        memberRepository.save(Member.builder().username("member3").age(10).build());
+        memberRepository.save(Member.builder().username("member4").age(10).build());
+        memberRepository.save(Member.builder().username("member5").age(10).build());
+
+        int age = 10;
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "username"));
+
+        //when
+        Slice<Member> pageByAge = memberRepository.findSliceByAge(age, pageRequest);
+
+        //then
+        List<Member> content = pageByAge.getContent();
+//        long totalCount = pageByAge.getTotalElements();
+
+        assertThat(content.size()).isEqualTo(3);
+//        assertThat(totalCount).isEqualTo(5);
+        assertThat(pageByAge.getNumber()).isEqualTo(0);
+//        assertThat(pageByAge.getTotalPages()).isEqualTo(2);
+        assertThat(pageByAge.isFirst()).isTrue();
     }
 }
