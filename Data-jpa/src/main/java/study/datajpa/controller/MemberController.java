@@ -2,9 +2,14 @@ package study.datajpa.controller;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import study.datajpa.MemberDTO;
 import study.datajpa.entity.Member;
 import study.datajpa.repository.MemberRepository;
 
@@ -25,8 +30,16 @@ public class MemberController {
         return member.getUsername();
     }
 
+    @GetMapping("/members")
+    public Page<MemberDTO> findMembers(@PageableDefault(size = 12, sort = "username", direction = Sort.Direction.DESC) Pageable pageable) {
+        return memberRepository.findAll(pageable)
+                .map(MemberDTO::new);
+    }
+
     @PostConstruct
     public void init() {
-        memberRepository.save(Member.builder().username("user1").build());
+        for (int i = 0; i < 100; i++) {
+            memberRepository.save(Member.builder().username("user" + i).build());
+        }
     }
 }
