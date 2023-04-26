@@ -269,4 +269,43 @@ class MemberRepositoryTest {
         //then
         all.forEach(member -> assertThat(member.getTeam()).isInstanceOf(Team.class));
     }
+
+    @Test
+    public void queryHint() {
+        //given
+        Team teamA = Team.builder().name("teamA").build();
+        Team teamB = Team.builder().name("teamB").build();
+        teamRepository.save(teamA);
+        teamRepository.save(teamB);
+
+        Member member1 = Member.builder().username("member1").age(10).team(teamA).build();
+        memberRepository.save(member1);
+
+        em.flush();
+        em.clear();
+
+        //when
+        Member findMember = memberRepository.findReadOnlyById(member1.getId());
+        findMember.changeTeam(teamB);
+
+        em.flush();
+        em.clear();
+
+        //then
+        Member findMember1 = memberRepository.findReadOnlyById(member1.getId());
+        assertThat(findMember1.getTeam().getName()).isEqualTo("teamA");
+    }
+
+    @Test
+    public void jpaLock() {
+        //given
+        Member member1 = Member.builder().username("member1").age(10).build();
+        memberRepository.save(member1);
+
+        em.flush();
+        em.clear();
+
+        //when
+        Member findMember = memberRepository.findLockById(member1.getId());
+    }
 }
