@@ -46,4 +46,30 @@ class MemberTest {
         }
     }
 
+    @Test
+    public void testEventBaseEntity() {
+        //given
+        Team teamA = Team.builder().name("TeamA").build();
+        Team teamB = Team.builder().name("TeamB").build();
+        em.persist(teamA); //@PrePersist
+        em.persist(teamB); //@PrePersist
+
+        Member member1 = Member.builder().username("member1").age(10).build();
+        em.persist(member1); //@PrePersist
+
+        member1.changeTeam(teamB);
+
+        em.flush(); //@PreUpdate
+        em.clear();
+
+        //when
+        Member findMember = em.createQuery("select m from Member m where m.id = :id", Member.class)
+                .setParameter("id", member1.getId())
+                .getSingleResult();
+
+
+        //then
+        System.out.println("findMember.getCreatedDate() = " + findMember.getCreatedDate());
+        System.out.println("findMember.getUpdatedDate() = " + findMember.getUpdatedDate());
+    }
 }
