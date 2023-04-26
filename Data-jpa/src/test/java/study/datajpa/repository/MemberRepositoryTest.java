@@ -308,4 +308,16 @@ class MemberRepositoryTest {
         //when
         Member findMember = memberRepository.findLockById(member1.getId());
     }
+
+    @Test
+    public void customRepository() {
+        //given
+        Member member1 = Member.builder().username("member1").age(10).build();
+        memberRepository.save(member1);
+        //when
+        List<Member> memberCustom = memberRepository.findMemberCustom();
+
+        //then
+        assertThat(memberCustom.get(0)).isEqualTo(member1);
+    }
 }
