@@ -25,8 +25,8 @@ public class MemberController {
     }
 
     //도메인 클래스 컨버터
-    @GetMapping("/members/{id}")
-    public String findMember2(@PathVariable("id") Member member) {
+    @GetMapping("/members/{id2}")
+    public String findMember2(@PathVariable("id2") Member member) {
         return member.getUsername();
     }
 
