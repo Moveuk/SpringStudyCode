@@ -323,7 +323,7 @@ class MemberRepositoryTest {
     @Test
     public void specBasic() {
         //given
-        Team team = new Team("teamA");
+        Team team = Team.builder().name("teamA").build();
         em.persist(team);
         Member member1 = Member.builder().username("member1").age(10).team(team).build();
         Member member2 = Member.builder().username("member2").age(10).team(team).build();
@@ -337,5 +337,30 @@ class MemberRepositoryTest {
         List<Member> result = memberRepository.findAll(spec);
 
         Assertions.assertThat(result.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void queryByExample() {
+        //given
+        Team team = Team.builder().name("teamA").build();
+        em.persist(team);
+        Member member1 = Member.builder().username("member1").age(10).team(team).build();
+        Member member2 = Member.builder().username("member2").age(10).team(team).build();
+        em.persist(member1);
+        em.persist(member2);
+        em.flush();
+        em.clear();
+
+        //when
+        //Probe
+        Team teamA = Team.builder().name("teamA").build();
+        Member member = Member.builder().username("member1").team(teamA).build();
+
+        ExampleMatcher matcher = ExampleMatcher.matching().withIgnorePaths("age");
+        Example<Member> example = Example.of(member, matcher);
+
+        List<Member> result = memberRepository.findAll(example);
+
+        Assertions.assertThat(result.get(0).getUsername()).isEqualTo("member1");
     }
 }
